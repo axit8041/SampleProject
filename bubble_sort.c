@@ -4,20 +4,20 @@
 /**
  * @brief Sorts an integer array in ascending order using bubble sort.
  *
- * @param arr Array of integers to sort.
- * @param n   Number of elements in the array.
+ * @param inputArray   Array of integers to sort.
+ * @param elementCount Number of elements in the array.
  */
-static void bubble_sort(int *arr, size_t n)
+static void bubble_sort(int *inputArray, size_t elementCount)
 {
-    for (size_t i = 0; i < n; i++) {
-        for (size_t j = 0; j + 1 < n - i; j++) {
-            if (arr[j] > arr[j + 1]) {
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-            }
+        for (size_t outerIndex = 0; outerIndex < elementCount; outerIndex++) {
+                for (size_t innerIndex = 0; innerIndex + 1 < elementCount - outerIndex; innerIndex++) {
+                        if (inputArray[innerIndex] > inputArray[innerIndex + 1]) {
+                                int tempValue = inputArray[innerIndex];
+                                inputArray[innerIndex] = inputArray[innerIndex + 1];
+                                inputArray[innerIndex + 1] = tempValue;
+                        }
+                }
         }
-    }
 }
 
 /**
@@ -32,36 +32,44 @@ static void bubble_sort(int *arr, size_t n)
  */
 int main(void)
 {
-    int *arr = NULL;
-    size_t count = 0;
-    size_t capacity = 0;
-    int value;
+        int *inputArray = NULL;
+        size_t elementCount = 0;
+        size_t currentCapacity = 0;
+        int currentValue;
 
-    while (scanf("%d", &value) == 1) {
-        if (count >= capacity) {
-            size_t new_capacity = capacity == 0 ? 8 : capacity * 2;
-            int *new_arr = realloc(arr, new_capacity * sizeof(*arr));
-            if (new_arr == NULL) {
-                fprintf(stderr, "Memory allocation failed\n");
-                free(arr);
-                return 1;
-            }
-            arr = new_arr;
-            capacity = new_capacity;
+        while (scanf("%d", &currentValue) == 1) {
+                if (elementCount >= currentCapacity) {
+                        size_t newCapacity = currentCapacity == 0 ? 8 : currentCapacity * 2;
+                        int *resizedArray = realloc(inputArray, newCapacity * sizeof(*inputArray));
+                        if (resizedArray == NULL) {
+                                fprintf(stderr, "Memory allocation failed\n");
+                                free(inputArray);
+                                return 1;
+                        }
+                        inputArray = resizedArray;
+                        currentCapacity = newCapacity;
+                }
+                inputArray[elementCount++] = currentValue;
         }
-        arr[count++] = value;
-    }
 
-    bubble_sort(arr, count);
+        bubble_sort(inputArray, elementCount);
 
-    for (size_t i = 0; i < count; i++) {
-        printf("%d", arr[i]);
-        if (i + 1 < count) {
-            printf(" ");
+        for (size_t index = 0; index < elementCount; index++) {
+                int bytesWritten = printf("%d", inputArray[index]);
+                if (bytesWritten < 0) {
+                        free(inputArray);
+                        return 1;
+                }
+                if (index + 1 < elementCount) {
+                        bytesWritten = printf(" ");
+                        if (bytesWritten < 0) {
+                                free(inputArray);
+                                return 1;
+                        }
+                }
         }
-    }
-    printf("\n");
+        printf("\n");
 
-    free(arr);
-    return 0;
+        free(inputArray);
+        return 0;
 }
