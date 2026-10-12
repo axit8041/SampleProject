@@ -1,0 +1,36 @@
+# Doxyfile for the Stack and Queue Application
+
+PROJECT_NAME           = "Stack and Queue Application"
+PROJECT_BRIEF          = "Reusable stack and queue ADTs with shared/static libraries"
+OUTPUT_DIRECTORY       = docs
+INPUT                  = . docs
+FILE_PATTERNS          = *.c *.h *.md
+RECURSIVE              = YES
+EXCLUDE                = docs/html
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+
+GENERATE_LATEX         = NO
+
+HAVE_DOT               = NO
+CLASS_GRAPH            = TEXT
+
+
+
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = YES
+
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = YES
+WARN_FORMAT            = "$file:$line: $text"
+
+IMAGE_PATH             = docs
+
+USE_MDFILE_AS_MAINPAGE = README.md
