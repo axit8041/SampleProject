@@ -1,19 +1,20 @@
-# Makefile for the Hello World program
+# Makefile for the Sample Project
 
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11
-TARGET = hello_world
-SRC = hello_world.c
+TARGETS = $(patsubst %.c,%,$(wildcard *.c))
 
 .PHONY: all clean test
 
-all: $(TARGET)
+all: $(TARGETS)
 
-$(TARGET): $(SRC)
+%: %.c
 	$(CC) $(CFLAGS) -o $@ $^
 
-test: $(TARGET)
+test: $(TARGETS)
 	bash tests/test_hello_world.sh
+	if test -f bubble_sort; then bash tests/test_bubble_sort.sh; fi
+	bash tests/test_linear_search.sh
 
 clean:
-	-rm -f $(TARGET)
+	-rm -f $(TARGETS)
