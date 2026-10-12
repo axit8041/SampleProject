@@ -7,7 +7,9 @@ AR = ar
 ARFLAGS = rcs
 GST_CFLAGS = $(shell pkg-config --cflags gstreamer-1.0)
 GST_LIBS = $(shell pkg-config --libs gstreamer-1.0)
-TARGETS = hello_world bubble_sort linear_search gstreamer_app stack_queue_app
+WEBRTC_CFLAGS = $(shell pkg-config --cflags gstreamer-1.0 gstreamer-webrtc-1.0 gstreamer-sdp-1.0 json-glib-1.0)
+WEBRTC_LIBS = $(shell pkg-config --libs gstreamer-1.0 gstreamer-webrtc-1.0 gstreamer-sdp-1.0 json-glib-1.0)
+TARGETS = hello_world bubble_sort linear_search gstreamer_app stack_queue_app webrtc_stream
 LIBRARIES = libdatastructures.a libdatastructures.so
 
 .PHONY: all clean test
@@ -41,12 +43,16 @@ libdatastructures.so: stack.o queue.o
 stack_queue_app: stack_queue_app.c libdatastructures.a
 	$(CC) $(CFLAGS) -o $@ $< libdatastructures.a
 
+webrtc_stream: webrtc_stream.c webrtc_stream.h
+	$(CC) $(CFLAGS) $(WEBRTC_CFLAGS) -o $@ webrtc_stream.c $(WEBRTC_LIBS)
+
 test: all
 	bash tests/test_hello_world.sh
 	bash tests/test_bubble_sort.sh
 	bash tests/test_linear_search.sh
 	bash tests/test_gstreamer_app.sh
 	bash tests/test_stack_queue_app.sh
+	bash tests/test_webrtc_stream.sh
 
 clean:
 	-rm -f $(TARGETS) $(LIBRARIES) *.o tests/test_stack_queue

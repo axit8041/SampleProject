@@ -1,7 +1,7 @@
-# Doxyfile for the Stack and Queue Application
+# Doxyfile for the SampleProject
 
-PROJECT_NAME           = "Stack and Queue Application"
-PROJECT_BRIEF          = "Reusable stack and queue ADTs with shared/static libraries"
+PROJECT_NAME           = "SampleProject"
+PROJECT_BRIEF          = "Data structures, GStreamer, and WebRTC streaming demos"
 OUTPUT_DIRECTORY       = docs
 INPUT                  = . docs
 FILE_PATTERNS          = *.c *.h *.md

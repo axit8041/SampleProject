@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<!--
+  @file webrtc_client.html
+  @brief Browser client for the WebRTC streaming demo.
+
+  Connects to the signaling WebSocket server, performs SDP offer/answer
+  negotiation with ICE candidate exchange, and renders the received
+  media stream.  Supports both the GStreamer RTP media mode and the
+  DataChannel binary-transfer mode.
+
+  Compatible with Google Chrome and other modern WebRTC-capable browsers.
+  Uses the standard RTCPeerConnection API with the Google STUN server.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Streaming Demo - Browser Client</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #00d2ff;
+            font-size: 1.8rem;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            max-width: 1200px;
+            width: 100%;
+        }
+        .panel {
+            background-color: #16213e;
+            border-radius: 12px;
+            padding: 20px;
+            flex: 1 1 400px;
+            min-width: 300px;
+        }
+        .panel h2 {
+            color: #00d2ff;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+        video {
+            width: 100%;
+            background-color: #000;
+            border-radius: 8px;
+            max-height: 400px;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .btn-connect { background-color: #0f3460; color: #00d2ff; }
+        .btn-connect:hover { background-color: #1a4a80; }
+        .btn-disconnect { background-color: #e94560; color: #fff; }
+        .btn-disconnect:hover { background-color: #ff6b81; }
+        .btn-disconnect:disabled { background-color: #555; cursor: not-allowed; }
+        .settings {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        label { font-size: 0.9rem; color: #aaa; }
+        input, select {
+            padding: 8px 12px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background-color: #0f3460;
+            color: #e0e0e0;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #16213e;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 840px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log-entry { margin-bottom: 4px; }
+        .log-info { color: #00d2ff; }
+        .log-error { color: #e94560; }
+        .log-success { color: #4caf50; }
+    </style>
+</head>
+<body>
+    <h1>WebRTC Streaming Demo</h1>
+
+    <div class="container">
+        <!-- Settings panel -->
+        <div class="panel">
+            <h2>Connection Settings</h2>
+            <div class="settings">
+                <div>
+                    <label for="signalingUrl">Signaling Server (WebSocket):</label>
+                    <input type="text" id="signalingUrl"
+                           placeholder="ws://localhost:8443">
+                </div>
+                <div>
+                    <label for="modeSelect">Streaming Mode:</label>
+                    <select id="modeSelect">
+                        <option value="gstreamer">GStreamer (RTP Media)</option>
+                        <option value="datachannel">DataChannel (Binary)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="btn-connect" id="btnConnect"
+                        onclick="connectToServer()">Connect</button>
+                <button class="btn-disconnect" id="btnDisconnect"
+                        onclick="disconnectFromServer()" disabled>Disconnect</button>
+            </div>
+        </div>
+
+        <!-- Video panel -->
+        <div class="panel">
+            <h2>Remote Stream</h2>
+            <video id="remoteVideo" autoplay playsinline></video>
+        </div>
+    </div>
+
+    <!-- Log output -->
+    <div id="status"></div>
+
+    <script>
+    "use strict";
+
+    /**
+     * Google STUN server configuration for ICE.
+     * @type {RTCConfiguration}
+     */
+    var rtcConfig = {
+        iceServers: [
+            { urls: "stun:stun.l.google.com:19302" }
+        ]
+    };
+
+    /** @type {RTCPeerConnection|null} */
+    var peerConnection = null;
+
+    /** @type {WebSocket|null} */
+    var signalingSocket = null;
+
+    /** @type {RTCDataChannel|null} */
+    var dataChannel = null;
+
+    /**
+     * Append a log entry to the status panel.
+     * @param {string} message - The message to display.
+     * @param {string} level   - One of "info", "error", "success".
+     */
+    function addLog(message, level) {
+        var statusDiv = document.getElementById("status");
+        var entry = document.createElement("div");
+        entry.className = "log-entry log-" + (level || "info");
+        entry.textContent = "[" + new Date().toLocaleTimeString() + "] " + message;
+        statusDiv.appendChild(entry);
+        statusDiv.scrollTop = statusDiv.scrollHeight;
+    }
+
+    /**
+     * Create and configure an RTCPeerConnection.
+     * Attaches ICE candidate and track handlers.
+     */
+    function createPeerConnection() {
+        peerConnection = new RTCPeerConnection(rtcConfig);
+
+        peerConnection.onicecandidate = function(event) {
+            if (event.candidate && signalingSocket &&
+                signalingSocket.readyState === WebSocket.OPEN) {
+                signalingSocket.send(JSON.stringify({
+                    type: "ice-candidate",
+                    candidate: event.candidate
+                }));
+                addLog("Sent ICE candidate", "info");
+            }
+        };
+
+        peerConnection.ontrack = function(event) {
+            addLog("Received remote track: " + event.track.kind, "success");
+            var videoEl = document.getElementById("remoteVideo");
+            if (event.streams && event.streams.length > 0) {
+                videoEl.srcObject = event.streams[0];
+            }
+        };
+
+        peerConnection.oniceconnectionstatechange = function() {
+            addLog("ICE state: " + peerConnection.iceConnectionState, "info");
+        };
+
+        peerConnection.ondatachannel = function(event) {
+            addLog("DataChannel received: " + event.channel.label, "success");
+            dataChannel = event.channel;
+            dataChannel.onmessage = function(msgEvent) {
+                addLog("DataChannel message: " +
+                       msgEvent.data.toString().substring(0, 100), "info");
+            };
+        };
+    }
+
+    /**
+     * Handle incoming signaling messages from the WebSocket server.
+     * @param {MessageEvent} event - The WebSocket message event.
+     */
+    function onSignalingMessage(event) {
+        var msg;
+        try {
+            msg = JSON.parse(event.data);
+        } catch (e) {
+            addLog("Invalid signaling message", "error");
+            return;
+        }
+
+        if (msg.type === "offer") {
+            addLog("Received SDP offer", "info");
+            var offerDesc = new RTCSessionDescription({
+                type: "offer",
+                sdp: msg.sdp
+            });
+            peerConnection.setRemoteDescription(offerDesc)
+                .then(function() {
+                    return peerConnection.createAnswer();
+                })
+                .then(function(answer) {
+                    return peerConnection.setLocalDescription(answer);
+                })
+                .then(function() {
+                    signalingSocket.send(JSON.stringify({
+                        type: "answer",
+                        sdp: peerConnection.localDescription.sdp
+                    }));
+                    addLog("Sent SDP answer", "success");
+                })
+                .catch(function(err) {
+                    addLog("Offer handling error: " + err.message, "error");
+                });
+
+        } else if (msg.type === "ice-candidate" && msg.candidate) {
+            var candidate = new RTCIceCandidate(msg.candidate);
+            peerConnection.addIceCandidate(candidate)
+                .then(function() {
+                    addLog("Added ICE candidate", "info");
+                })
+                .catch(function(err) {
+                    addLog("ICE candidate error: " + err.message, "error");
+                });
+        }
+    }
+
+    /**
+     * Connect to the signaling server and begin WebRTC negotiation.
+     */
+    function connectToServer() {
+        var urlInput = document.getElementById("signalingUrl");
+        var signalingUrl = urlInput.value.trim();
+        if (!signalingUrl) {
+            signalingUrl = "ws://localhost:8443";
+            urlInput.value = signalingUrl;
+        }
+
+        addLog("Connecting to " + signalingUrl + " ...", "info");
+
+        createPeerConnection();
+
+        signalingSocket = new WebSocket(signalingUrl);
+
+        signalingSocket.onopen = function() {
+            addLog("WebSocket connected", "success");
+            document.getElementById("btnConnect").disabled = true;
+            document.getElementById("btnDisconnect").disabled = false;
+
+            /* For datachannel mode, create a local data channel */
+            var modeSelect = document.getElementById("modeSelect");
+            if (modeSelect.value === "datachannel") {
+                dataChannel = peerConnection.createDataChannel("stream-channel");
+                dataChannel.onopen = function() {
+                    addLog("DataChannel opened", "success");
+                };
+                dataChannel.onmessage = function(msgEvent) {
+                    addLog("DataChannel data: " +
+                           msgEvent.data.toString().substring(0, 100), "info");
+                };
+                addLog("Created local DataChannel", "info");
+            }
+        };
+
+        signalingSocket.onmessage = onSignalingMessage;
+
+        signalingSocket.onerror = function() {
+            addLog("WebSocket error", "error");
+        };
+
+        signalingSocket.onclose = function() {
+            addLog("WebSocket closed", "info");
+            document.getElementById("btnConnect").disabled = false;
+            document.getElementById("btnDisconnect").disabled = true;
+        };
+    }
+
+    /**
+     * Disconnect from the signaling server and close the peer connection.
+     */
+    function disconnectFromServer() {
+        if (dataChannel) {
+            dataChannel.close();
+            dataChannel = null;
+        }
+        if (peerConnection) {
+            peerConnection.close();
+            peerConnection = null;
+        }
+        if (signalingSocket) {
+            signalingSocket.close();
+            signalingSocket = null;
+        }
+        document.getElementById("remoteVideo").srcObject = null;
+        document.getElementById("btnConnect").disabled = false;
+        document.getElementById("btnDisconnect").disabled = true;
+        addLog("Disconnected", "info");
+    }
+
+    /* Set default signaling URL on load */
+    window.addEventListener("load", function() {
+        var urlInput = document.getElementById("signalingUrl");
+        if (!urlInput.value) {
+            urlInput.value = "ws://localhost:8443";
+        }
+        addLog("WebRTC Browser Client ready (Chrome supported)", "success");
+    });
+    </script>
+</body>
+</html>
