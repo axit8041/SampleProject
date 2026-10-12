@@ -1,47 +1,56 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
-  <rect width="720" height="520" fill="#ffffff"/>
-  <text x="360" y="30" font-family="sans-serif" font-size="18" font-weight="bold" text-anchor="middle">Stack &amp; Queue Application Architecture</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="650" viewBox="0 0 760 650">
+  <rect width="760" height="650" fill="#ffffff"/>
+  <text x="380" y="30" font-family="sans-serif" font-size="18" font-weight="bold" text-anchor="middle">SampleProject Architecture</text>
+
+  <!-- Standalone programs -->
+  <rect x="40" y="60" width="680" height="120" fill="#f8f9fa" stroke="#333" stroke-width="2" rx="8"/>
+  <text x="380" y="85" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Standalone Programs</text>
+
+  <rect x="60" y="105" width="110" height="50" fill="#d4edda" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="115" y="135" font-family="monospace" font-size="11" text-anchor="middle">hello_world.c</text>
+
+  <rect x="190" y="105" width="110" height="50" fill="#d4edda" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="245" y="135" font-family="monospace" font-size="11" text-anchor="middle">bubble_sort.c</text>
+
+  <rect x="320" y="105" width="110" height="50" fill="#d4edda" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="375" y="135" font-family="monospace" font-size="11" text-anchor="middle">linear_search.c</text>
+
+  <rect x="450" y="105" width="110" height="50" fill="#d4edda" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="505" y="135" font-family="monospace" font-size="11" text-anchor="middle">gstreamer_app.c</text>
+
+  <rect x="580" y="105" width="120" height="50" fill="#fff3cd" stroke="#333" stroke-width="2" rx="4"/>
+  <text x="640" y="130" font-family="monospace" font-size="11" text-anchor="middle">string_concat.c</text>
+  <text x="640" y="145" font-family="sans-serif" font-size="9" text-anchor="middle" fill="#555">hardcoded concat + reverse</text>
 
   <!-- Library box -->
-  <rect x="200" y="60" width="320" height="260" fill="#e8f4f8" stroke="#333" stroke-width="2" rx="8"/>
-  <text x="360" y="90" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">libdatastructures</text>
+  <rect x="200" y="220" width="360" height="220" fill="#e8f4f8" stroke="#333" stroke-width="2" rx="8"/>
+  <text x="380" y="245" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">libdatastructures</text>
 
-  <!-- Stack files -->
-  <rect x="230" y="120" width="110" height="50" fill="#d4edda" stroke="#333" stroke-width="1" rx="4"/>
-  <text x="285" y="150" font-family="monospace" font-size="12" text-anchor="middle">stack.h</text>
+  <rect x="230" y="270" width="130" height="50" fill="#d4edda" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="295" y="300" font-family="monospace" font-size="12" text-anchor="middle">stack.h / stack.c</text>
 
-  <rect x="230" y="190" width="110" height="50" fill="#d4edda" stroke="#333" stroke-width="1" rx="4"/>
-  <text x="285" y="220" font-family="monospace" font-size="12" text-anchor="middle">stack.c</text>
+  <rect x="400" y="270" width="130" height="50" fill="#d4edda" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="465" y="300" font-family="monospace" font-size="12" text-anchor="middle">queue.h / queue.c</text>
 
-  <!-- Queue files -->
-  <rect x="380" y="120" width="110" height="50" fill="#fff3cd" stroke="#333" stroke-width="1" rx="4"/>
-  <text x="435" y="150" font-family="monospace" font-size="12" text-anchor="middle">queue.h</text>
+  <rect x="230" y="350" width="130" height="40" fill="#f8d7da" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="295" y="375" font-family="monospace" font-size="11" text-anchor="middle">libdatastructures.a</text>
 
-  <rect x="380" y="190" width="110" height="50" fill="#fff3cd" stroke="#333" stroke-width="1" rx="4"/>
-  <text x="435" y="220" font-family="monospace" font-size="12" text-anchor="middle">queue.c</text>
+  <rect x="400" y="350" width="130" height="40" fill="#f8d7da" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="465" y="375" font-family="monospace" font-size="11" text-anchor="middle">libdatastructures.so</text>
 
-  <!-- Library outputs -->
-  <rect x="230" y="270" width="110" height="40" fill="#f8d7da" stroke="#333" stroke-width="1" rx="4"/>
-  <text x="285" y="295" font-family="monospace" font-size="11" text-anchor="middle">libdatastructures.a</text>
+  <!-- Library consumer -->
+  <rect x="280" y="480" width="200" height="50" fill="#cce5ff" stroke="#333" stroke-width="2" rx="4"/>
+  <text x="380" y="510" font-family="monospace" font-size="12" text-anchor="middle">stack_queue_app.c</text>
 
-  <rect x="380" y="270" width="110" height="40" fill="#f8d7da" stroke="#333" stroke-width="1" rx="4"/>
-  <text x="435" y="295" font-family="monospace" font-size="11" text-anchor="middle">libdatastructures.so</text>
-
-  <!-- Application -->
-  <rect x="270" y="360" width="180" height="50" fill="#cce5ff" stroke="#333" stroke-width="2" rx="4"/>
-  <text x="360" y="390" font-family="monospace" font-size="12" text-anchor="middle">stack_queue_app.c</text>
-
-  <!-- Test -->
-  <rect x="270" y="440" width="180" height="40" fill="#e2e3e5" stroke="#333" stroke-width="1" rx="4"/>
-  <text x="360" y="465" font-family="monospace" font-size="12" text-anchor="middle">tests/test_stack_queue_app.sh</text>
+  <!-- Tests -->
+  <rect x="280" y="560" width="200" height="40" fill="#e2e3e5" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="380" y="585" font-family="monospace" font-size="11" text-anchor="middle">tests/*.sh</text>
 
   <!-- Arrows -->
-  <line x1="285" y1="170" x2="285" y2="190" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="435" y1="170" x2="435" y2="190" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="285" y1="240" x2="285" y2="270" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="435" y1="240" x2="435" y2="270" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="360" y1="310" x2="360" y2="360" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
-  <line x1="360" y1="410" x2="360" y2="440" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="295" y1="320" x2="295" y2="350" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="465" y1="320" x2="465" y2="350" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="380" y1="390" x2="380" y2="480" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="380" y1="530" x2="380" y2="560" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- Arrow marker -->
   <defs>
@@ -50,7 +59,10 @@
     </marker>
   </defs>
 
-  <text x="360" y="505" font-family="sans-serif" font-size="11" text-anchor="middle" fill="#555">
-    Build flow: headers define APIs → sources compile → libraries link → application runs → tests validate.
+  <text x="380" y="610" font-family="sans-serif" font-size="11" text-anchor="middle" fill="#555">
+    Build flow: standalone programs compile independently; library sources build into static/shared libraries,
+  </text>
+  <text x="380" y="625" font-family="sans-serif" font-size="11" text-anchor="middle" fill="#555">
+    stack_queue_app links the library, and shell tests validate every target.
   </text>
 </svg>
