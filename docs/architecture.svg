@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
+  <rect width="720" height="520" fill="#ffffff"/>
+  <text x="360" y="30" font-family="sans-serif" font-size="18" font-weight="bold" text-anchor="middle">Stack &amp; Queue Application Architecture</text>
+
+  <!-- Library box -->
+  <rect x="200" y="60" width="320" height="260" fill="#e8f4f8" stroke="#333" stroke-width="2" rx="8"/>
+  <text x="360" y="90" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">libdatastructures</text>
+
+  <!-- Stack files -->
+  <rect x="230" y="120" width="110" height="50" fill="#d4edda" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="285" y="150" font-family="monospace" font-size="12" text-anchor="middle">stack.h</text>
+
+  <rect x="230" y="190" width="110" height="50" fill="#d4edda" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="285" y="220" font-family="monospace" font-size="12" text-anchor="middle">stack.c</text>
+
+  <!-- Queue files -->
+  <rect x="380" y="120" width="110" height="50" fill="#fff3cd" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="435" y="150" font-family="monospace" font-size="12" text-anchor="middle">queue.h</text>
+
+  <rect x="380" y="190" width="110" height="50" fill="#fff3cd" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="435" y="220" font-family="monospace" font-size="12" text-anchor="middle">queue.c</text>
+
+  <!-- Library outputs -->
+  <rect x="230" y="270" width="110" height="40" fill="#f8d7da" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="285" y="295" font-family="monospace" font-size="11" text-anchor="middle">libdatastructures.a</text>
+
+  <rect x="380" y="270" width="110" height="40" fill="#f8d7da" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="435" y="295" font-family="monospace" font-size="11" text-anchor="middle">libdatastructures.so</text>
+
+  <!-- Application -->
+  <rect x="270" y="360" width="180" height="50" fill="#cce5ff" stroke="#333" stroke-width="2" rx="4"/>
+  <text x="360" y="390" font-family="monospace" font-size="12" text-anchor="middle">stack_queue_app.c</text>
+
+  <!-- Test -->
+  <rect x="270" y="440" width="180" height="40" fill="#e2e3e5" stroke="#333" stroke-width="1" rx="4"/>
+  <text x="360" y="465" font-family="monospace" font-size="12" text-anchor="middle">tests/test_stack_queue_app.sh</text>
+
+  <!-- Arrows -->
+  <line x1="285" y1="170" x2="285" y2="190" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="435" y1="170" x2="435" y2="190" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="285" y1="240" x2="285" y2="270" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="435" y1="240" x2="435" y2="270" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="360" y1="310" x2="360" y2="360" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="360" y1="410" x2="360" y2="440" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <text x="360" y="505" font-family="sans-serif" font-size="11" text-anchor="middle" fill="#555">
+    Build flow: headers define APIs → sources compile → libraries link → application runs → tests validate.
+  </text>
+</svg>
