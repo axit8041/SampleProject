@@ -1,19 +1,22 @@
-# Makefile for the Hello World program
+# Makefile for the Sample Project
 
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11
-TARGET = hello_world
-SRC = hello_world.c
+TARGETS = hello_world bubble_sort
 
 .PHONY: all clean test
 
-all: $(TARGET)
+all: $(TARGETS)
 
-$(TARGET): $(SRC)
+hello_world: hello_world.c
 	$(CC) $(CFLAGS) -o $@ $^
 
-test: $(TARGET)
+bubble_sort: bubble_sort.c
+	$(CC) $(CFLAGS) -o $@ $^
+
+test: $(TARGETS)
 	bash tests/test_hello_world.sh
+	bash tests/test_bubble_sort.sh
 
 clean:
-	-rm -f $(TARGET)
+	-rm -f $(TARGETS)
