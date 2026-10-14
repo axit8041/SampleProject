@@ -7,7 +7,7 @@ AR = ar
 ARFLAGS = rcs
 GST_CFLAGS = $(shell pkg-config --cflags gstreamer-1.0)
 GST_LIBS = $(shell pkg-config --libs gstreamer-1.0)
-TARGETS = hello_world bubble_sort linear_search gstreamer_app stack_queue_app string_concat axit_soni
+TARGETS = hello_world bubble_sort linear_search gstreamer_app stack_queue_app string_concat axit_soni tictactoe_server
 LIBRARIES = libdatastructures.a libdatastructures.so
 
 .PHONY: all clean test
@@ -32,6 +32,9 @@ string_concat: string_concat.c
 axit_soni: axit_soni.c
 	$(CC) $(CFLAGS) -o $@ $^
 
+tictactoe_server: tictactoe_server.c
+	$(CC) $(CFLAGS) -o $@ $^ -lpthread
+
 stack.o: stack.c stack.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -55,6 +58,7 @@ test: all
 	bash tests/test_stack_queue_app.sh
 	bash tests/test_string_concat.sh
 	bash tests/test_axit_soni.sh
+	bash tests/test_tictactoe.sh
 
 clean:
 	-rm -f $(TARGETS) $(LIBRARIES) *.o tests/test_stack_queue
