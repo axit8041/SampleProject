@@ -7,7 +7,7 @@ AR = ar
 ARFLAGS = rcs
 GST_CFLAGS = $(shell pkg-config --cflags gstreamer-1.0)
 GST_LIBS = $(shell pkg-config --libs gstreamer-1.0)
-TARGETS = hello_world bubble_sort linear_search gstreamer_app stack_queue_app string_concat
+TARGETS = hello_world bubble_sort linear_search gstreamer_app stack_queue_app string_concat factorial
 LIBRARIES = libdatastructures.a libdatastructures.so
 
 .PHONY: all clean test
@@ -27,6 +27,9 @@ gstreamer_app: gstreamer_app.c
 	$(CC) $(CFLAGS) $(GST_CFLAGS) -o $@ $^ $(GST_LIBS)
 
 string_concat: string_concat.c
+	$(CC) $(CFLAGS) -o $@ $^
+
+factorial: factorial.c
 	$(CC) $(CFLAGS) -o $@ $^
 
 stack.o: stack.c stack.h
@@ -51,6 +54,7 @@ test: all
 	bash tests/test_gstreamer_app.sh
 	bash tests/test_stack_queue_app.sh
 	bash tests/test_string_concat.sh
+	bash tests/test_factorial.sh
 
 clean:
 	-rm -f $(TARGETS) $(LIBRARIES) *.o tests/test_stack_queue
